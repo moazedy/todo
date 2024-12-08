@@ -13,6 +13,7 @@ type GenericRepo[E model.Entity] interface {
 	Delete(context.Context, string) error
 	GetByStringField(ctx context.Context, fieldName, fieldValue string) (*E, error)
 	List(context.Context) ([]E, error)
+	Exist(ctx context.Context, ID string) (bool, error)
 }
 
 type GenericRepoFactory[E model.Entity] interface {

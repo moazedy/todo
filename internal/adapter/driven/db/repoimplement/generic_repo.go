@@ -83,3 +83,16 @@ func (gr genericRepo[E]) List(context.Context) ([]E, error) {
 
 	return entityList, nil
 }
+
+func (gr genericRepo[E]) Exist(ctx context.Context, id string) (bool, error) {
+	entityInstance := new(E)
+	err := gr.db.Where(fmt.Sprintf("%s = ?", fieldNameID), id).First(entityInstance).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
+}

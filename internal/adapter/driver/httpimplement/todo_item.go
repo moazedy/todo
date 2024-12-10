@@ -49,7 +49,9 @@ func (ti todoItem) Update(ctx echo.Context) error {
 }
 
 func (ti todoItem) Delete(ctx echo.Context) error {
-	var req dto.DeleteTodoItemRequest
+	id := ctx.Param("id")
+	req := dto.DeleteTodoItemRequest{ID: id}
+
 	if err := ctx.Bind(&req); err != nil {
 		return cerror.NewBadRequestError(cerror.ErrorMessage(err.Error()))
 	}

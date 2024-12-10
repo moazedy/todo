@@ -40,7 +40,7 @@ func (pc PostgresConfig) ToStringWithDbName() string {
 }
 
 func Init() Config {
-	viper.SetConfigFile("./configs/vmanage.yaml")
+	viper.SetConfigFile("./config/todo.yaml")
 	err := viper.ReadInConfig()
 	if err != nil {
 		println(err.Error())

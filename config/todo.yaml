@@ -1,0 +1,11 @@
+Server:
+  Address: "localhost"
+  Port: "4853"
+
+Postgres:
+  Host: "localhost"
+  Port: "5432"
+  Username: "postgres"
+  Password: "postgresPass"
+  Name: "todo"
+  Driver: "postgres"

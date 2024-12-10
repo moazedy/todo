@@ -6,6 +6,12 @@ Postgres:
   Host: "localhost"
   Port: "5432"
   Username: "postgres"
-  Password: "postgresPass"
+  Password: "password"
   Name: "todo"
   Driver: "postgres"
+
+Storage:
+  Endpoint: "localhost:9090"
+  Bucket: "todo-files"
+  AccessKey: "jjX6Ve4koDp9wTQZWDuA"
+  SecretKey: "D5eYj0lpiXkxW5Vx5558LO9C2LzD4jqDr0CDgNV2"

@@ -9,6 +9,7 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
+	Storage  AwsS3Config
 }
 
 type ServerConfig struct {
@@ -23,6 +24,13 @@ type PostgresConfig struct {
 	Password string
 	Name     string
 	Driver   string
+}
+
+type AwsS3Config struct {
+	Endpoint  string
+	Bucket    string
+	AccessKey string
+	SecretKey string
 }
 
 func (pc PostgresConfig) ToString() string {

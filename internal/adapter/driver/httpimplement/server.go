@@ -30,7 +30,7 @@ func Start(cfg config.Config) {
 	register(e, cfg)
 
 	go func() {
-		if err := e.Start(cfg.Postgres.Host + ":" + cfg.Postgres.Port); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		if err := e.Start(cfg.Server.Address + ":" + cfg.Server.Port); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatal("shutting down server: " + err.Error())
 		}
 	}()

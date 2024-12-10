@@ -15,7 +15,11 @@ type CreateTodoItemRequest struct {
 }
 
 func (ctr CreateTodoItemRequest) Validate(ctx context.Context) error {
-	return cerror.NewBadRequestError(cerror.ErrorMessage(validator.Validate(ctx, ctr).Error()))
+	if err := validator.Validate(ctx, ctr); err != nil {
+		return cerror.NewBadRequestError(cerror.ErrorMessage(err.Error()))
+	}
+
+	return nil
 }
 
 type CreateTodoItemResponse struct {
@@ -30,7 +34,11 @@ type UpdateTodoItemRequest struct {
 }
 
 func (utr UpdateTodoItemRequest) Validate(ctx context.Context) error {
-	return cerror.NewBadRequestError(cerror.ErrorMessage(validator.Validate(ctx, utr).Error()))
+	if err := validator.Validate(ctx, utr); err != nil {
+		return cerror.NewBadRequestError(cerror.ErrorMessage(err.Error()))
+	}
+
+	return nil
 }
 
 type DeleteTodoItemRequest struct {
@@ -38,7 +46,11 @@ type DeleteTodoItemRequest struct {
 }
 
 func (dtr DeleteTodoItemRequest) Validate(ctx context.Context) error {
-	return cerror.NewBadRequestError(cerror.ErrorMessage(validator.Validate(ctx, dtr).Error()))
+	if err := validator.Validate(ctx, dtr); err != nil {
+		return cerror.NewBadRequestError(cerror.ErrorMessage(err.Error()))
+	}
+
+	return nil
 }
 
 type GetTodoItemByIDRequest struct {
@@ -46,7 +58,11 @@ type GetTodoItemByIDRequest struct {
 }
 
 func (gtr GetTodoItemByIDRequest) Validate(ctx context.Context) error {
-	return cerror.NewBadRequestError(cerror.ErrorMessage(validator.Validate(ctx, gtr).Error()))
+	if err := validator.Validate(ctx, gtr); err != nil {
+		return cerror.NewBadRequestError(cerror.ErrorMessage(err.Error()))
+	}
+
+	return nil
 }
 
 type GetTodoItemByIDResponse struct {

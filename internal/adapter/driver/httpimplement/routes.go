@@ -45,7 +45,7 @@ func register(app *echo.Echo, cfg config.Config) {
 
 	app.POST("/todo/item", items.todoController.Create)
 	app.PUT("/todo/item", items.todoController.Update)
-	app.DELETE("/todo/item", items.todoController.Delete)
+	app.DELETE("/todo/item/:id", items.todoController.Delete)
 	app.GET("/todo/item/:id", items.todoController.GetByID)
 }
 

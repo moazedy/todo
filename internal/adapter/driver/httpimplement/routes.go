@@ -53,7 +53,7 @@ func register(app *echo.Echo, cfg config.Config) {
 	items.fileRepo = repoimplement.NewFile(items.storageAgent)
 
 	items.todoService = srvimplement.NewTodoItem(items.txFactory, items.todoItemRepoFactory)
-	items.fileService = srvimplement.NewFile(items.fileRepo)
+	items.fileService = srvimplement.NewFile(items.fileRepo, cfg.Storage.MaxFileSize)
 
 	items.todoController = NewTodoItem(items.todoService)
 

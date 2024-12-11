@@ -11,7 +11,7 @@ import (
 type CreateTodoItemRequest struct {
 	Description string    `json:"description" validate:"required,lte=100,gte=3"`
 	DueDate     time.Time `json:"dueDate" validate:"required"`
-	FileID      string    `json:"fileId" validate:"required,uuid"`
+	FileName    string    `json:"fileName" validate:"required"`
 }
 
 func (ctr CreateTodoItemRequest) Validate(ctx context.Context) error {
@@ -30,7 +30,7 @@ type UpdateTodoItemRequest struct {
 	ID          string    `json:"id" validate:"required,uuid"`
 	Description string    `json:"description" validate:"required,lte=100,gte=3"`
 	DueDate     time.Time `json:"dueDate" validate:"required"`
-	FileID      string    `json:"fileId" validate:"required,uuid"`
+	FileName    string    `json:"fileName" validate:"required"`
 }
 
 func (utr UpdateTodoItemRequest) Validate(ctx context.Context) error {
@@ -69,5 +69,5 @@ type GetTodoItemByIDResponse struct {
 	ID          string    `json:"id"`
 	Description string    `json:"description"`
 	DueDate     time.Time `json:"dueDate"`
-	FileID      string    `json:"fileId"`
+	FileName    string    `json:"fileName"`
 }

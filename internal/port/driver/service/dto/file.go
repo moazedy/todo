@@ -29,11 +29,11 @@ func (ufr UploadFileRequest) Validate(ctx context.Context) error {
 }
 
 type UploadFileResponse struct {
-	FileID string `json:"fileId"`
+	FileName string `json:"fileName"`
 }
 
 type DownloadFileRequest struct {
-	FilID string `json:"fileId" validate:"required,uuid"`
+	FileName string `json:"fileName" validate:"required"`
 }
 
 func (dfr DownloadFileRequest) Validate(ctx context.Context) error {

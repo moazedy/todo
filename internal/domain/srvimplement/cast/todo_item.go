@@ -9,7 +9,7 @@ func CreateTodoItemRequestToServiceModel(in dto.CreateTodoItemRequest) model.Tod
 	return model.TodoItem{
 		Description: in.Description,
 		DueDate:     in.DueDate,
-		FileID:      in.FileID,
+		FileName:    in.FileName,
 	}
 }
 
@@ -24,7 +24,7 @@ func UpdateTodoItemRequestToServiceModel(in dto.UpdateTodoItemRequest) model.Tod
 		ID:          in.ID,
 		Description: in.Description,
 		DueDate:     in.DueDate,
-		FileID:      in.FileID,
+		FileName:    in.FileName,
 	}
 }
 
@@ -33,6 +33,6 @@ func ToGetTodoItemByIDResponse(in model.TodoItem) dto.GetTodoItemByIDResponse {
 		ID:          in.ID,
 		Description: in.Description,
 		DueDate:     in.DueDate,
-		FileID:      in.FileID,
+		FileName:    in.FileName,
 	}
 }

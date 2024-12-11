@@ -12,7 +12,7 @@ type TodoItem struct {
 	ID          string    `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primarykey"`
 	Description string    `json:"description"`
 	DueDate     time.Time `json:"dueDate"`
-	FileID      string    `json:"fileId"`
+	FileName    string    `json:"fileName"`
 
 	CreatedAt time.Time
 	UpdatedAt time.Time

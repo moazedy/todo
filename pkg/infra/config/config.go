@@ -27,10 +27,11 @@ type PostgresConfig struct {
 }
 
 type AwsS3Config struct {
-	Endpoint  string
-	Bucket    string
-	AccessKey string
-	SecretKey string
+	Endpoint    string
+	Bucket      string
+	AccessKey   string
+	SecretKey   string
+	MaxFileSize int64
 }
 
 func (pc PostgresConfig) ToString() string {

@@ -15,3 +15,4 @@ Storage:
   Bucket: "todo"
   AccessKey: "OyOKCJcBx3aW05nF9ttl"
   SecretKey: "ffDIi3eBb8wOOhfamPcjr05gNKj3R3tXywc6enUP"
+  MaxFileSize: 500000

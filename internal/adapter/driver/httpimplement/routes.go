@@ -1,13 +1,12 @@
 package httpimplement
 
 import (
-	"context"
 	"fmt"
-	"log"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	awsconfig "github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/labstack/echo"
 	"github.com/moazedy/todo/internal/adapter/driven/db/repoimplement"
 	"github.com/moazedy/todo/internal/domain/model"
@@ -27,7 +26,7 @@ type serverItems struct {
 	dbConnection *gorm.DB
 	txFactory    tx.TXFactory
 	storageAgent storage.StorageAgent
-	awsClient    *s3.Client
+	awsClient    *s3.S3
 
 	// repo layer
 	todoItemRepoFactory repository.GenericRepoFactory[model.TodoItem]
@@ -47,7 +46,7 @@ var items serverItems
 func register(app *echo.Echo, cfg config.Config) {
 	items.dbConnection = initDB(cfg.Postgres)
 	items.txFactory = tx.NewTXFactory(items.dbConnection)
-	items.awsClient = createAWSS3Client(cfg.Storage.Endpoint, cfg.Storage.AccessKey, cfg.Storage.SecretKey)
+	items.awsClient = createAWSS3Client(cfg.Storage.Endpoint, cfg.Storage.AccessKey, cfg.Storage.SecretKey, cfg.Storage.Bucket)
 	items.storageAgent = storage.NewStorageAgent(items.awsClient, cfg.Storage.Bucket)
 
 	items.todoItemRepoFactory = repoimplement.NewGenericRepoFactory[model.TodoItem]()
@@ -61,7 +60,7 @@ func register(app *echo.Echo, cfg config.Config) {
 	items.fileController = NewFile(items.fileService)
 
 	app.POST("/file", items.fileController.Upload)
-	app.GET("/file/:file_id", items.fileController.Download)
+	app.GET("/file/:file_name", items.fileController.Download)
 
 	app.POST("/todo/item", items.todoController.Create)
 	app.PUT("/todo/item", items.todoController.Update)
@@ -112,24 +111,26 @@ func initDB(cfg config.PostgresConfig) *gorm.DB {
 	return db
 }
 
-func createAWSS3Client(endpoint, accessKey, secretKey string) *s3.Client {
-	// Load the Shared AWS Configuration (~/.aws/config)
-	cfg, err := awsconfig.LoadDefaultConfig(context.TODO(), awsconfig.WithRegion("us-west-2"))
-	if err != nil {
-		log.Fatal(err)
+func createAWSS3Client(endpoint, accessKey, secretKey, bucketName string) *s3.S3 {
+	s3Config := &aws.Config{
+		Credentials:      credentials.NewStaticCredentials(accessKey, secretKey, ""),
+		Endpoint:         aws.String(endpoint),
+		Region:           aws.String("us-east-1"),
+		DisableSSL:       aws.Bool(true),
+		S3ForcePathStyle: aws.Bool(true),
+	}
+	newSession := session.New(s3Config)
+
+	s3Client := s3.New(newSession)
+
+	cparams := &s3.CreateBucketInput{
+		Bucket: &bucketName,
 	}
 
-	cfg.Credentials = aws.CredentialsProviderFunc(func(ctx context.Context) (aws.Credentials, error) {
-		return aws.Credentials{
-			AccessKeyID:     accessKey,
-			SecretAccessKey: secretKey,
-		}, nil
-	})
-	cfg.BaseEndpoint = aws.String(endpoint)
-	fmt.Printf("AWS S3 options -> endpoint: %s, access key: %s, secret key: %s\n", endpoint, accessKey, secretKey)
+	_, err := s3Client.CreateBucket(cparams)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 
-	// Create an Amazon S3 service client
-	client := s3.NewFromConfig(cfg)
-
-	return client
+	return s3Client
 }

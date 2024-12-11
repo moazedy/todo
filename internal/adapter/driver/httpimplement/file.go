@@ -36,8 +36,8 @@ func (f file) Upload(ctx echo.Context) error {
 }
 
 func (f file) Download(ctx echo.Context) error {
-	fileID := ctx.Param("file_id")
-	req := dto.DownloadFileRequest{FilID: fileID}
+	fileID := ctx.Param("file_name")
+	req := dto.DownloadFileRequest{FileName: fileID}
 
 	resp, err := f.fileService.Download(ctx.Request().Context(), req)
 	if err != nil {

@@ -50,7 +50,7 @@ func (f file) Upload(ctx context.Context, req dto.UploadFileRequest) (out dto.Up
 		return
 	}
 
-	out.FileID = uId.String()
+	out.FileName= fileName
 	return
 }
 
@@ -60,7 +60,7 @@ func (f file) Download(ctx context.Context, req dto.DownloadFileRequest) (out dt
 	}
 
 	// TODO : file is being saved by .type extention, but in request the type is bypassed.
-	out.File, err = f.fileRepo.Download(ctx, req.FilID)
+	out.File, err = f.fileRepo.Download(ctx, req.FileName)
 
 	return
 }

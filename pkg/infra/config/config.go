@@ -10,6 +10,7 @@ type Config struct {
 	Server   ServerConfig
 	Postgres PostgresConfig
 	Storage  AwsS3Config
+	Queue    SQS
 }
 
 type ServerConfig struct {
@@ -32,6 +33,14 @@ type AwsS3Config struct {
 	AccessKey   string
 	SecretKey   string
 	MaxFileSize int64
+}
+
+type SQS struct {
+	IsMock    bool
+	Region    string
+	AccessKey string
+	SecretKey string
+	QueueUrl  string
 }
 
 func (pc PostgresConfig) ToString() string {

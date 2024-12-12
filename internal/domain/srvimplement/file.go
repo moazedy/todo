@@ -8,23 +8,32 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/moazedy/todo/internal/domain/errors"
+	"github.com/moazedy/todo/internal/domain/value"
 	"github.com/moazedy/todo/internal/port/driven/db/repository"
 	"github.com/moazedy/todo/internal/port/driver/service"
 	"github.com/moazedy/todo/internal/port/driver/service/dto"
 )
 
 type file struct {
-	fileRepo repository.File
+	fileRepo    repository.File
+	fileMaxSize int64
 }
 
-func NewFile(fileRepo repository.File) service.File {
+func NewFile(fileRepo repository.File, fileMaxSize int64) service.File {
 	return file{
-		fileRepo: fileRepo,
+		fileRepo:    fileRepo,
+		fileMaxSize: fileMaxSize,
 	}
 }
 
 func (f file) Upload(ctx context.Context, req dto.UploadFileRequest) (out dto.UploadFileResponse, err error) {
 	if err = req.Validate(ctx); err != nil {
+		return
+	}
+
+	if req.FileHeader.Size > f.fileMaxSize {
+		err = errors.ErrFileIsOverSized
 		return
 	}
 
@@ -41,8 +50,14 @@ func (f file) Upload(ctx context.Context, req dto.UploadFileRequest) (out dto.Up
 
 	uId := uuid.New()
 
-	// TODO : check allowed file types
 	fileType := strings.Split(http.DetectContentType(data), "/")[1]
+
+	_, typeAllowed := value.AllowedFileTypes[fileType]
+	if !typeAllowed {
+		err = errors.ErrFileTypeNotAllowed
+		return
+	}
+
 	fileName := fmt.Sprintf("%s.%s", uId.String(), fileType)
 
 	err = f.fileRepo.Upload(ctx, data, fileName)
@@ -50,7 +65,7 @@ func (f file) Upload(ctx context.Context, req dto.UploadFileRequest) (out dto.Up
 		return
 	}
 
-	out.FileName= fileName
+	out.FileName = fileName
 	return
 }
 
@@ -59,7 +74,6 @@ func (f file) Download(ctx context.Context, req dto.DownloadFileRequest) (out dt
 		return
 	}
 
-	// TODO : file is being saved by .type extention, but in request the type is bypassed.
 	out.File, err = f.fileRepo.Download(ctx, req.FileName)
 
 	return

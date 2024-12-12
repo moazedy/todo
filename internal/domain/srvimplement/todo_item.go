@@ -2,6 +2,8 @@ package srvimplement
 
 import (
 	"context"
+	"encoding/json"
+	"log"
 
 	"github.com/moazedy/todo/internal/domain/errors"
 	"github.com/moazedy/todo/internal/domain/model"
@@ -19,12 +21,14 @@ const (
 type todoItem struct {
 	txFactory           tx.TXFactory
 	todoItemRepoFactory repository.GenericRepoFactory[model.TodoItem]
+	queueRepo           repository.Queue
 }
 
-func NewTodoItem(txFactory tx.TXFactory, todoItemRepoFactory repository.GenericRepoFactory[model.TodoItem]) service.TodoItem {
+func NewTodoItem(txFactory tx.TXFactory, todoItemRepoFactory repository.GenericRepoFactory[model.TodoItem], queueRepo repository.Queue) service.TodoItem {
 	return todoItem{
 		txFactory:           txFactory,
 		todoItemRepoFactory: todoItemRepoFactory,
+		queueRepo:           queueRepo,
 	}
 }
 
@@ -51,6 +55,14 @@ func (ti todoItem) create(ctx context.Context, tx tx.TX, req dto.CreateTodoItemR
 	if todoServiceModel != nil {
 		out = cast.ToCreateTodoItemResponse(*todoServiceModel)
 	}
+
+	go func() {
+		byteMessage, _ := json.Marshal(*todoServiceModel)
+		err := ti.queueRepo.SendMessage(ctx, string(byteMessage))
+		if err != nil {
+			log.Printf("error while pushing message to queue : %v \n", string(byteMessage))
+		}
+	}()
 
 	return
 }

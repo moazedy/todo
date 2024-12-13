@@ -44,13 +44,13 @@ var items serverItems
 
 func register(app *echo.Echo, cfg config.Config) {
 	items.dbConnection = tx.GetDB(cfg.Postgres)
-	items.txFactory = tx.NewTXFactory(items.dbConnection)
+	items.txFactory = tx.NewTXFactory(cfg.Postgres.IsMock, items.dbConnection)
 	items.awsClient = storage.CreateAWSS3Client(cfg.Storage.Endpoint, cfg.Storage.AccessKey, cfg.Storage.SecretKey, cfg.Storage.Bucket)
 	items.storageAgentFactory = storage.NewStorageAgentFactory(cfg.Storage.IsMock, items.awsClient, cfg.Storage.Bucket)
 	items.sqsClient = queue.NewSQSClient(cfg.Queue)
 	items.sqsClientFactory = queue.NewSQSClientFactory(cfg.Queue.IsMock, items.sqsClient)
 
-	items.todoItemRepoFactory = repoimplement.NewGenericRepoFactory[model.TodoItem]()
+	items.todoItemRepoFactory = repoimplement.NewGenericRepoFactory[model.TodoItem](cfg.Postgres.IsMock)
 	items.fileRepo = repoimplement.NewFile(items.storageAgentFactory)
 	items.queueRepo = repoimplement.NewQueue(items.sqsClientFactory, cfg.Queue.QueueUrl)
 

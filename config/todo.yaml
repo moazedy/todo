@@ -1,9 +1,9 @@
 Server:
-  Address: "localhost"
+  Address: "0.0.0.0"
   Port: "4853"
 
 Postgres:
-  Host: "localhost"
+  Host: "db"
   Port: "5432"
   Username: "postgres"
   Password: "postgresPass"
@@ -11,10 +11,10 @@ Postgres:
   Driver: "postgres"
 
 Storage:
-  Endpoint: "http://localhost:9000"
+  Endpoint: "minio:9000"
   Bucket: "todo"
-  AccessKey: "OyOKCJcBx3aW05nF9ttl"
-  SecretKey: "ffDIi3eBb8wOOhfamPcjr05gNKj3R3tXywc6enUP"
+  AccessKey: "mys3accesskey"
+  SecretKey: "mys3secretkey"
   MaxFileSize: 500000
 
 SQS:

@@ -25,9 +25,10 @@ func newMockGenericRepo[E model.Entity]() repository.GenericRepo[E] {
 
 func (gr *mockGenericRepo[E]) Create(ctx context.Context, entityData E) (*E, error) {
 	id := uuid.New().String()
-	gr.db[id] = (entityData.WithIDSet(id)).(E)
+	entityToSave := (entityData.WithIDSet(id)).(E)
+	gr.db[id] = entityToSave
 
-	return &entityData, nil
+	return &entityToSave, nil
 }
 
 func (gr *mockGenericRepo[E]) Update(ctx context.Context, entityData E) (*E, error) {

@@ -19,4 +19,11 @@ type TodoItem struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
-func (ti TodoItem) IsEntity() {}
+func (ti TodoItem) WithIDSet(id string) Entity {
+	ti.ID = id
+	return ti
+}
+
+func (ti TodoItem) GetID() string {
+	return ti.ID
+}

@@ -9,6 +9,7 @@ Postgres:
   Password: "postgresPass"
   Name: "todo"
   Driver: "postgres"
+  IsMock: false
 
 Storage:
   Endpoint: "minio:9000"

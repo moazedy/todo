@@ -25,6 +25,7 @@ type PostgresConfig struct {
 	Password string
 	Name     string
 	Driver   string
+	IsMock   bool
 }
 
 type AwsS3Config struct {

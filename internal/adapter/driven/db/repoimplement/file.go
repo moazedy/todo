@@ -8,19 +8,21 @@ import (
 )
 
 type file struct {
-	storageAgent storage.StorageAgent
+	storageAgentFactory storage.StorageAgentFactory
 }
 
-func NewFile(sa storage.StorageAgent) repository.File {
+func NewFile(sa storage.StorageAgentFactory) repository.File {
 	return file{
-		storageAgent: sa,
+		storageAgentFactory: sa,
 	}
 }
 
 func (f file) Upload(ctx context.Context, data []byte, filename string) error {
-	return f.storageAgent.UploadFile(ctx, data, filename)
+	storageAgent := f.storageAgentFactory.NewStorageAgent()
+	return storageAgent.UploadFile(ctx, data, filename)
 }
 
 func (f file) Download(ctx context.Context, filename string) ([]byte, error) {
-	return f.storageAgent.DownloadFile(ctx, filename)
+	storageAgent := f.storageAgentFactory.NewStorageAgent()
+	return storageAgent.DownloadFile(ctx, filename)
 }

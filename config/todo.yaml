@@ -16,6 +16,7 @@ Storage:
   AccessKey: "mys3accesskey"
   SecretKey: "mys3secretkey"
   MaxFileSize: 500000
+  IsMock: false
 
 SQS:
   IsMock: true

@@ -19,12 +19,12 @@ import (
 
 type serverItems struct {
 	// basics
-	dbConnection     *gorm.DB
-	txFactory        tx.TXFactory
-	storageAgent     storage.StorageAgent
-	awsClient        *s3.S3
-	sqsClient        *sqs.Client
-	sqsClientFactory queue.SQSClientFactory
+	dbConnection        *gorm.DB
+	txFactory           tx.TXFactory
+	storageAgentFactory storage.StorageAgentFactory
+	awsClient           *s3.S3
+	sqsClient           *sqs.Client
+	sqsClientFactory    queue.SQSClientFactory
 
 	// repo layer
 	todoItemRepoFactory repository.GenericRepoFactory[model.TodoItem]
@@ -46,12 +46,12 @@ func register(app *echo.Echo, cfg config.Config) {
 	items.dbConnection = tx.GetDB(cfg.Postgres)
 	items.txFactory = tx.NewTXFactory(items.dbConnection)
 	items.awsClient = storage.CreateAWSS3Client(cfg.Storage.Endpoint, cfg.Storage.AccessKey, cfg.Storage.SecretKey, cfg.Storage.Bucket)
-	items.storageAgent = storage.NewStorageAgent(items.awsClient, cfg.Storage.Bucket)
+	items.storageAgentFactory = storage.NewStorageAgentFactory(cfg.Storage.IsMock, items.awsClient, cfg.Storage.Bucket)
 	items.sqsClient = queue.NewSQSClient(cfg.Queue)
 	items.sqsClientFactory = queue.NewSQSClientFactory(cfg.Queue.IsMock, items.sqsClient)
 
 	items.todoItemRepoFactory = repoimplement.NewGenericRepoFactory[model.TodoItem]()
-	items.fileRepo = repoimplement.NewFile(items.storageAgent)
+	items.fileRepo = repoimplement.NewFile(items.storageAgentFactory)
 	items.queueRepo = repoimplement.NewQueue(items.sqsClientFactory, cfg.Queue.QueueUrl)
 
 	items.todoService = srvimplement.NewTodoItem(items.txFactory, items.todoItemRepoFactory, items.queueRepo)

@@ -10,35 +10,8 @@ import (
 	"gorm.io/driver/postgres"
 )
 
-type TX interface {
-	Commit() error
-	Rollback() error
-	AutoCR(error) error
-	GetConnection() *gorm.DB
-}
-
-type TXFactory interface {
-	NewTX() TX
-}
-
-type txFactory struct {
-	connection *gorm.DB
-}
-
-func NewTXFactory(db *gorm.DB) TXFactory {
-	return txFactory{
-		connection: db,
-	}
-}
-
 type tx struct {
 	connection *gorm.DB
-}
-
-func (tf txFactory) NewTX() TX {
-	return &tx{
-		connection: tf.connection.Begin(),
-	}
 }
 
 func (t *tx) GetConnection() *gorm.DB {

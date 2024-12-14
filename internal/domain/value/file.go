@@ -7,4 +7,5 @@ var AllowedFileTypes = map[string]string{
 	"txt":                  "",
 	"text":                 "",
 	"plain; charset=utf-8": "", // for unit tests
+	"octet-stream":         "", // for benchmarking
 }

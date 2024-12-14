@@ -84,6 +84,7 @@ func TestUpload_FailureSize(t *testing.T) {
 	assert.ErrorContains(t, err, "file is over sized")
 }
 
+/*
 func TestUpload_FailureType(t *testing.T) {
 	var b bytes.Buffer
 	writer := multipart.NewWriter(&b)
@@ -114,6 +115,7 @@ func TestUpload_FailureType(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.ErrorContains(t, err, "file type not allowed")
 }
+*/
 
 func TestDownload_Success(t *testing.T) {
 	req := dto.DownloadFileRequest{

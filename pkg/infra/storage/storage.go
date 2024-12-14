@@ -10,19 +10,19 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-type StorageAgent struct {
+type storageAgent struct {
 	client     *s3.S3
 	bucketName string
 }
 
-func NewStorageAgent(client *s3.S3, bucketName string) StorageAgent {
-	return StorageAgent{
+func newStorageAgent(client *s3.S3, bucketName string) StorageAgent {
+	return storageAgent{
 		client:     client,
 		bucketName: bucketName,
 	}
 }
 
-func (s StorageAgent) UploadFile(ctx context.Context, file []byte, filename string) error {
+func (s storageAgent) UploadFile(ctx context.Context, file []byte, filename string) error {
 	_, err := s.client.PutObject(&s3.PutObjectInput{
 		Body:   strings.NewReader(string(file)),
 		Bucket: &s.bucketName,
@@ -32,7 +32,7 @@ func (s StorageAgent) UploadFile(ctx context.Context, file []byte, filename stri
 	return err
 }
 
-func (s StorageAgent) DownloadFile(ctx context.Context, filename string) ([]byte, error) {
+func (s storageAgent) DownloadFile(ctx context.Context, filename string) ([]byte, error) {
 	obj, err := s.client.GetObject(
 		&s3.GetObjectInput{
 			Bucket: aws.String(s.bucketName),

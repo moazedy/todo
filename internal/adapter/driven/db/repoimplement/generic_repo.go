@@ -15,14 +15,20 @@ const (
 	fieldNameID = "id"
 )
 
-type genericRepoFactory[E model.Entity] struct{}
+type genericRepoFactory[E model.Entity] struct {
+	isMock bool
+}
 
-func NewGenericRepoFactory[E model.Entity]() repository.GenericRepoFactory[E] {
-	return genericRepoFactory[E]{}
+func NewGenericRepoFactory[E model.Entity](isMock bool) repository.GenericRepoFactory[E] {
+	return genericRepoFactory[E]{isMock: isMock}
 }
 
 func (grf genericRepoFactory[E]) NewGenericRepo(tx tx.TX) repository.GenericRepo[E] {
-	return newGenericRepo[E](tx.GetConnection())
+	if grf.isMock {
+		return grf.newMockGenericRepo()
+	} else {
+		return newGenericRepo[E](tx.GetConnection())
+	}
 }
 
 type genericRepo[E model.Entity] struct {

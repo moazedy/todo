@@ -1,5 +1,6 @@
 package model
 
 type Entity interface {
-	IsEntity()
+	WithIDSet(string) Entity
+	GetID() string
 }

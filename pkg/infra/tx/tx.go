@@ -1,38 +1,17 @@
 package tx
 
 import (
+	"fmt"
+
+	"github.com/moazedy/todo/internal/domain/model"
+	"github.com/moazedy/todo/pkg/infra/config"
 	"gorm.io/gorm"
+
+	"gorm.io/driver/postgres"
 )
-
-type TX interface {
-	Commit() error
-	Rollback() error
-	AutoCR(error) error
-	GetConnection() *gorm.DB
-}
-
-type TXFactory interface {
-	NewTX() TX
-}
-
-type txFactory struct {
-	connection *gorm.DB
-}
-
-func NewTXFactory(db *gorm.DB) TXFactory {
-	return txFactory{
-		connection: db,
-	}
-}
 
 type tx struct {
 	connection *gorm.DB
-}
-
-func (tf txFactory) NewTX() TX {
-	return &tx{
-		connection: tf.connection.Begin(),
-	}
 }
 
 func (t *tx) GetConnection() *gorm.DB {
@@ -62,4 +41,47 @@ func (t *tx) AutoCR(err error) error {
 
 		return err
 	}
+}
+
+// opening connection with database
+func GetDB(cfg config.PostgresConfig) *gorm.DB {
+	db, err := gorm.Open(postgres.Open(cfg.ToString()), &gorm.Config{})
+	if err != nil {
+		println(err)
+		panic("failed to connect with db")
+	}
+
+	// Check if the desired database exists
+	err = db.Exec(
+		fmt.Sprintf("CREATE DATABASE %s",
+			cfg.Name,
+		)).Error
+	if err != nil {
+		println(err.Error())
+	}
+
+	// Reconnect to the newly created database
+	db, err = gorm.Open(postgres.Open(cfg.ToStringWithDbName()), &gorm.Config{})
+	if err != nil {
+		println(err)
+		panic("failed to connect with db")
+	}
+
+	err = db.Exec(
+		`CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`,
+	).Error
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// NOTE : register all entities in here
+	err = db.AutoMigrate(
+		&model.TodoItem{},
+	)
+	if err != nil {
+		println(err.Error())
+		panic("failed to migrate")
+	}
+
+	return db
 }

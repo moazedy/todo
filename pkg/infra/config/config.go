@@ -25,6 +25,7 @@ type PostgresConfig struct {
 	Password string
 	Name     string
 	Driver   string
+	IsMock   bool
 }
 
 type AwsS3Config struct {
@@ -33,6 +34,7 @@ type AwsS3Config struct {
 	AccessKey   string
 	SecretKey   string
 	MaxFileSize int64
+	IsMock      bool
 }
 
 type SQS struct {

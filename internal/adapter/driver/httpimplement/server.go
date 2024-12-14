@@ -8,21 +8,23 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo-contrib/prometheus"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/moazedy/todo/pkg/infra/config"
 )
 
 func Start(cfg config.Config) {
 	e := echo.New()
 
-	/*
-		monitoring.RegisterMonitoringMiddlewareEcho(config.AppConfig.General.AppName+"_http", e)
-		e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: []string{"*"},
-			AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE, echo.OPTIONS},
-		}))
-	*/
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE, echo.OPTIONS},
+	}))
+
+	p := prometheus.NewPrometheus(cfg.Server.Name, nil)
+	p.Use(e)
+
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(CustomErrorHandlerMiddleWare)

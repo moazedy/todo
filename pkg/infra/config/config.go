@@ -14,6 +14,7 @@ type Config struct {
 }
 
 type ServerConfig struct {
+	Name    string
 	Address string
 	Port    string
 }

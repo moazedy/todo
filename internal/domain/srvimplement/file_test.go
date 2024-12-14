@@ -114,3 +114,23 @@ func TestUpload_FailureType(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.ErrorContains(t, err, "file type not allowed")
 }
+
+func TestDownload_Success(t *testing.T) {
+	req := dto.DownloadFileRequest{
+		FileName: "testfilename",
+	}
+	resp, err := fileService.Download(context.Background(), req)
+	assert.Nil(t, err)
+
+	assert.Equal(t, "this is the test file", string(resp.File))
+}
+
+func TestDownload_FailureFileName(t *testing.T) {
+	req := dto.DownloadFileRequest{
+		// FileName: "testfilename",
+	}
+	_, err := fileService.Download(context.Background(), req)
+	assert.NotNil(t, err)
+
+	assert.ErrorContains(t, err, "Error:Field validation for 'FileName' failed on the 'required' tag")
+}
